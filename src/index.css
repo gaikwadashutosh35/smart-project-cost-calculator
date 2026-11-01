@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/* Stripe-style tokens (from awesome-design-md / getdesign.md "stripe" DESIGN.md). */
+@theme {
+  --color-canvas: #f6f9fc;
+  --color-surface: #ffffff;
+  --color-primary: #533afd;
+  --color-primary-deep: #4434d4;
+  --color-primary-soft: #efedff;
+  --color-brand-dark: #1c1e54;
+  --color-ink: #0d253d;
+  --color-muted: #64748d;
+  --color-line: #e3e8ee;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --shadow-card: 0 2px 5px -1px rgba(50, 50, 93, 0.12), 0 1px 3px -1px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 13px 27px -5px rgba(50, 50, 93, 0.25), 0 8px 16px -8px rgba(0, 0, 0, 0.3);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@utility brand-gradient {
+  background-image: linear-gradient(90deg, #533afd 0%, #665efd 35%, #ea2261 75%, #f96bee 100%);
+}
+
+@utility eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.96px;
+  text-transform: uppercase;
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}

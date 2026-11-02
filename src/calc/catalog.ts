@@ -524,6 +524,16 @@ export const CATALOG: CatalogEntry[] = [
     ],
     requiresDb: 'Supabase', sourceUrl: SB, checked: V, status: 'verified', lockIn: 'medium', alternatives: ['Pusher', 'Ably'],
   },
+  {
+    id: 'supabase-edge-free', slot: 'backend', provider: 'Supabase', service: 'Edge Functions', plan: 'Included in Free', region: 'Global edge',
+    base: 0, meters: [], production: false, limits: { requests: 500_000 }, requiresDb: 'Supabase', sourceUrl: SB, checked: V, status: 'verified',
+    lockIn: 'medium', alternatives: ['Cloudflare Workers', 'Vercel Functions'],
+  },
+  {
+    id: 'supabase-edge-pro', slot: 'backend', provider: 'Supabase', service: 'Edge Functions', plan: 'Included in Pro', region: 'Global edge',
+    base: 0, meters: [{ key: 'requests', label: 'Invocations', unit: 'invocations', price: 2, per: 1e6, included: 2e6 }], requiresDb: 'Supabase',
+    sourceUrl: SB, checked: V, status: 'verified', lockIn: 'medium', alternatives: ['Cloudflare Workers', 'Vercel Functions'],
+  },
   ...([
     ['pusher-sandbox', 'Sandbox', 0, 100, 6e6],
     ['pusher-startup', 'Startup', 49, 500, 30e6],

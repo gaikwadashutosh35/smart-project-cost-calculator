@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supabase Pricing Calculator: Estimate Your Monthly Bill</title>
+    <meta name="description" content="Estimate your Supabase bill: Free vs Pro limits, overage rates for database, egress, users and storage, and compute add-on prices. Checked Nov 2026." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="{{SITE}}/supabase-pricing-calculator/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Smart Project Cost Calculator" />
+    <meta property="og:url" content="{{SITE}}/supabase-pricing-calculator/" />
+    <meta property="og:title" content="Supabase pricing calculator: what will your Supabase bill be?" />
+    <meta property="og:description" content="Free vs Pro limits, overage rates and compute add-ons, with a calculator for your monthly bill." />
+    <meta property="og:image" content="{{SITE}}/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icon48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/index.css" />
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebPage","@id":"{{SITE}}/supabase-pricing-calculator/#webpage","url":"{{SITE}}/supabase-pricing-calculator/","name":"Supabase Pricing Calculator: Estimate Your Monthly Bill","isPartOf":{"@type":"WebSite","@id":"{{SITE}}/#website","url":"{{SITE}}/","name":"Smart Project Cost Calculator"},"about":{"@id":"{{SITE}}/supabase-pricing-calculator/#app"},"datePublished":"2026-11-02","dateModified":"2026-11-02","breadcrumb":{"@id":"{{SITE}}/supabase-pricing-calculator/#breadcrumb"}},
+      {"@type":"WebApplication","@id":"{{SITE}}/supabase-pricing-calculator/#app","name":"Supabase pricing calculator","url":"{{SITE}}/supabase-pricing-calculator/","applicationCategory":"BusinessApplication","operatingSystem":"Web browser","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"{{SITE}}/#org","name":"Smart Project Cost Calculator","url":"{{SITE}}/","logo":{"@type":"ImageObject","url":"{{SITE}}/logo-512.png"}}},
+      {"@type":"BreadcrumbList","@id":"{{SITE}}/supabase-pricing-calculator/#breadcrumb","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Home","item":"{{SITE}}/"},
+        {"@type":"ListItem","position":2,"name":"Supabase pricing calculator","item":"{{SITE}}/supabase-pricing-calculator/"}]},
+      {"@type":"FAQPage","mainEntity":[
+        {"@type":"Question","name":"How much does Supabase cost per month?","acceptedAnswer":{"@type":"Answer","text":"Supabase Pro costs $25 a month per project, including Micro compute, an 8 GB database, 250 GB of egress, 100,000 monthly active users and 100 GB of file storage. Usage above those quotas is billed per unit, and larger compute sizes cost extra."}},
+        {"@type":"Question","name":"Is Supabase free?","acceptedAnswer":{"@type":"Answer","text":"Supabase has a Free plan with a 500 MB database, 5 GB of egress, 50,000 monthly active users and 1 GB of file storage. Free projects are paused after one week of inactivity, so it suits testing rather than production."}},
+        {"@type":"Question","name":"How much does Supabase cost for 100,000 users?","acceptedAnswer":{"@type":"Answer","text":"Pro includes 100,000 monthly active users, so authentication adds nothing up to that point. Each monthly active user above 100,000 costs $0.00325, so 200,000 monthly active users add $325 a month. Database size, egress and compute usually grow at the same time."}},
+        {"@type":"Question","name":"Do I pay separately for Supabase Auth?","acceptedAnswer":{"@type":"Answer","text":"No. Authentication is part of the plan, and monthly active users are billed only above the plan's quota (50,000 on Free, 100,000 on Pro)."}},
+        {"@type":"Question","name":"What does the Supabase compute credit cover?","acceptedAnswer":{"@type":"Answer","text":"Paid plans include $10 a month of compute credit, which covers one Micro instance. Larger sizes are billed at their list price minus the credit: Small adds $5, Medium $50 and Large $100 to the $25 Pro fee."}}
+      ]}
+    ]}
+    </script>
+  </head>
+  <body class="bg-canvas text-ink antialiased">
+    <header class="bg-surface border-b border-line">
+      <nav class="max-w-5xl mx-auto px-4 h-16 flex items-center gap-4" aria-label="Main">
+        <a href="/" class="font-bold tracking-[-0.2px]">Smart Project Cost Calculator</a>
+        <a href="/about/" class="ml-auto text-sm text-muted hover:text-primary hidden sm:inline">How it works</a>
+        <a href="/calculator/" class="ml-auto sm:ml-0 inline-flex items-center min-h-11 rounded-full bg-primary text-white px-5 text-sm font-bold whitespace-nowrap hover:bg-primary-deep"><span class="sm:hidden">Calculator</span><span class="hidden sm:inline">Full app calculator</span></a>
+      </nav>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+      <nav aria-label="Breadcrumb" class="text-sm text-muted"><a href="/" class="hover:text-primary">Home</a> › Supabase pricing calculator</nav>
+      <h1 class="text-[36px] sm:text-[52px] leading-[1.1] font-light tracking-[-1.2px] mt-3">Supabase pricing calculator</h1>
+      <p class="text-lg text-muted mt-5 max-w-3xl">
+        Supabase Pro costs $25 a month per project. That includes Micro compute, an 8 GB database, 250 GB of egress, 100,000 monthly active users and 100 GB of file storage.
+        Above those quotas you pay per unit — $0.125 per GB of database, $0.09 per GB of egress and $0.00325 per extra monthly active user.
+        The Free plan costs nothing but caps the database at 500 MB and pauses projects after a week of inactivity.
+      </p>
+      <p class="text-sm text-muted mt-4">Updated <time datetime="2026-11-02">2 November 2026</time> · prices checked on supabase.com/pricing on 1 November 2026 · not affiliated with Supabase</p>
+
+      <section class="mt-10 bg-surface border border-line rounded-2xl shadow-card p-4 sm:p-6" aria-labelledby="calc-h">
+        <h2 id="calc-h" class="text-2xl font-bold tracking-[-0.256px] mb-4">Estimate your Supabase bill</h2>
+        <div id="supabase-calc">
+          <noscript><p>The calculator needs JavaScript. The tables below list every quota and price it uses.</p></noscript>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">Supabase pricing at a glance</h2>
+        <p class="mt-3 max-w-3xl text-muted">Per project, per month, from Supabase's official pricing page (checked 1 November 2026).</p>
+        <div class="overflow-x-auto mt-4 bg-surface border border-line rounded-2xl shadow-card">
+          <!--SUPABASE_PRICING_TABLE-->
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">How much does Supabase cost per month? Three examples</h2>
+        <p class="mt-3 max-w-3xl text-muted">Each example is calculated with the same prices as the calculator above.</p>
+        <div class="grid md:grid-cols-3 gap-4 mt-4">
+          <!--SUPABASE_EXAMPLES-->
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">What do the Supabase compute add-ons cost?</h2>
+        <p class="mt-3 max-w-3xl">
+          Paid plans include $10 a month of compute credit, which covers one Micro instance. A larger size is billed at its list price minus that credit, so the Pro total grows with the size you pick.
+          Each additional project needs its own compute, starting at $10 a month.
+        </p>
+        <div class="overflow-x-auto mt-4 bg-surface border border-line rounded-2xl shadow-card">
+          <!--SUPABASE_COMPUTE_TABLE-->
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">When is the Supabase Free plan not enough?</h2>
+        <ul class="mt-4 space-y-2 list-disc pl-5 max-w-3xl">
+          <li><b>You run it in production.</b> Free projects are paused after one week of inactivity; Pro projects are never paused.</li>
+          <li><b>Your database passes 500 MB</b> or your app sends more than 5 GB of data a month.</li>
+          <li><b>You pass 50,000 monthly active users</b> or 1 GB of stored files.</li>
+          <li><b>You need more than 200 realtime connections at once</b> or 2 million realtime messages a month.</li>
+          <li><b>You need more than two active projects</b> — the Free plan allows two.</li>
+        </ul>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">What makes a Supabase bill grow?</h2>
+        <p class="mt-3 max-w-3xl">
+          On Pro, the $25 fee covers most small apps; the bill grows with four things. Monthly active users above 100,000 cost $0.00325 each, so 100,000 more users add $325.
+          Egress — every byte your database API and file downloads send out — costs $0.09 per GB above 250 GB, so 1 TB a month adds $67.50.
+          Database disk above 8 GB costs $0.125 per GB, and a bigger compute size adds $5 to $100 a month.
+        </p>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">Frequently asked questions</h2>
+        <div class="mt-4 space-y-5 max-w-3xl">
+          <div><h3 class="font-semibold">How much does Supabase cost per month?</h3><p class="mt-1 text-muted">Supabase Pro costs $25 a month per project, including Micro compute, an 8 GB database, 250 GB of egress, 100,000 monthly active users and 100 GB of file storage. Usage above those quotas is billed per unit, and larger compute sizes cost extra.</p></div>
+          <div><h3 class="font-semibold">Is Supabase free?</h3><p class="mt-1 text-muted">Supabase has a Free plan with a 500 MB database, 5 GB of egress, 50,000 monthly active users and 1 GB of file storage. Free projects are paused after one week of inactivity, so it suits testing rather than production.</p></div>
+          <div><h3 class="font-semibold">How much does Supabase cost for 100,000 users?</h3><p class="mt-1 text-muted">Pro includes 100,000 monthly active users, so authentication adds nothing up to that point. Each monthly active user above 100,000 costs $0.00325, so 200,000 monthly active users add $325 a month. Database size, egress and compute usually grow at the same time.</p></div>
+          <div><h3 class="font-semibold">Do I pay separately for Supabase Auth?</h3><p class="mt-1 text-muted">No. Authentication is part of the plan, and monthly active users are billed only above the plan's quota (50,000 on Free, 100,000 on Pro).</p></div>
+          <div><h3 class="font-semibold">What does the Supabase compute credit cover?</h3><p class="mt-1 text-muted">Paid plans include $10 a month of compute credit, which covers one Micro instance. Larger sizes are billed at their list price minus the credit: Small adds $5, Medium $50 and Large $100 to the $25 Pro fee.</p></div>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-lg font-bold">Sources</h2>
+        <ul class="mt-2 space-y-1 text-sm">
+          <li><a class="text-primary underline" href="https://supabase.com/pricing" rel="noopener">Supabase pricing</a> — plan fees, quotas, overage rates and compute add-ons, checked 1 November 2026.</li>
+        </ul>
+      </section>
+
+      <section class="mt-10 border-t border-line pt-8">
+        <h2 class="text-lg font-bold">Read next</h2>
+        <ul class="mt-3 space-y-2">
+          <li><a class="text-primary underline" href="/">SaaS and app hosting cost calculator: Supabase plus hosting, AI, email and more</a></li>
+          <li><a class="text-primary underline" href="/about/">How the estimates are calculated, with every pricing source</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="border-t border-line bg-surface">
+      <div class="max-w-5xl mx-auto px-4 py-6 text-sm text-muted flex flex-wrap gap-x-6 gap-y-2">
+        <span>Smart Project Cost Calculator</span>
+        <a href="/" class="hover:text-primary">Home</a>
+        <a href="/calculator/" class="hover:text-primary">Calculator</a>
+        <a href="/about/" class="hover:text-primary">How it works</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/supabase-calc.tsx"></script>
+  </body>
+</html>

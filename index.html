@@ -88,9 +88,9 @@
       <section class="mt-14">
         <h2 class="text-2xl font-bold tracking-[-0.256px]">What prices does the calculator use?</h2>
         <p class="mt-3 max-w-3xl">
-          The calculator prices 94 plans from more than 30 providers — including Vercel, Cloudflare, Supabase, Neon, Render, Fly.io, AWS, Google Cloud, Azure, Clerk, Resend, Twilio and MSG91 —
-          plus 12 AI models from OpenAI, Anthropic, Google and DeepSeek. Each price was read from the provider's official pricing page on 1 November 2026:
-          90 of the 94 plans are verified, and the rest are labelled as estimates. Currency conversion uses European Central Bank reference rates.
+          The calculator prices {{PLAN_COUNT}} plans from more than 30 providers — including Vercel, Cloudflare, Supabase, Neon, Render, Fly.io, AWS, Google Cloud, Azure, Clerk, Resend, Twilio and MSG91 —
+          plus {{AI_MODEL_COUNT}} AI models from OpenAI, Anthropic, Google and DeepSeek. Each price was read from the provider's official pricing page on 1 November 2026:
+          {{VERIFIED_COUNT}} of the {{PLAN_COUNT}} plans are verified, and the rest are labelled as estimates. Currency conversion uses European Central Bank reference rates.
           <a class="text-primary underline" href="/about/">See the method and every source</a>.
         </p>
       </section>
@@ -138,6 +138,7 @@
         <ul class="mt-3 space-y-2">
           <li><a class="text-primary underline" href="/about/">How the estimates are calculated: formulas, assumptions and pricing sources</a></li>
           <li><a class="text-primary underline" href="/calculator/">Open the calculator and estimate your own project</a></li>
+          <li><a class="text-primary underline" href="/supabase-pricing-calculator/">Supabase pricing calculator: Free vs Pro limits and your monthly bill</a></li>
         </ul>
       </section>
     </main>

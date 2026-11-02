@@ -39,16 +39,30 @@ Optional: set `ANTHROPIC_API_KEY` in `.env` (see `.env.example`) to turn on Clau
 
 Nothing Claude suggests is applied until you click Apply. Without a key the app works as before (keyword matching, no review). The key stays on the server. Requests use `fallbacks: "default"` so a refused request is retried server-side on Anthropic’s recommended fallback model.
 
-## Deploy
+## Deploy (Netlify)
+
+`netlify.toml` builds with `npm run build` and publishes `dist/`. The build also writes `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt` and `_headers` (security headers, asset caching) into `dist/`. The Claude features run as Netlify Functions in `netlify/functions/` at the same `/api/...` paths, using the same handlers as the Express server (`claude.ts`).
+
+1. In Netlify, add a site from the Git repository (build settings come from `netlify.toml`).
+2. Site configuration → Environment variables: set `ANTHROPIC_API_KEY` (scope must include Functions) and `SITE_URL` (your domain, e.g. `https://example.com`). Values in `netlify.toml` are not available to functions.
+3. Add the custom domain, then uncomment the redirect in `netlify.toml` so the `*.netlify.app` address forwards to it.
+4. In the Claude Console, set a monthly spend limit for the API key's workspace. It is the only hard cost cap (see below).
+
+Until `SITE_URL` is set, every page is served with `X-Robots-Tag: noindex`, so a placeholder domain never gets indexed.
+
+**Netlify limits that shape this setup** (checked 2026-11-02):
+- Functions have a fixed 60-second limit. The live price check reads at most 8 pricing pages per run (`MAX_PRICE_PAGES` in `claude.ts`) to stay under it; the rest are reported as skipped.
+- Rate limits are set in each function's `config`: price check 1 per visitor per 3 minutes, review 3 per 3 minutes. Description suggestions are not limited (about 1 cent each). The Free plan allows 2 rules per project and windows of at most 180 seconds, and there is no site-wide cap below Enterprise — hence the Claude Console spend limit.
+- Free plan: 300 credits a month. Each production deploy costs 15 credits and bandwidth 20 credits per GB. When credits run out, all sites on the account are paused until the next month, so avoid deploying on every small change.
+
+### Alternative: any Node host
 
 ```bash
 npm run build
 NODE_ENV=production npx tsx server.ts   # serves dist/ and the API on $PORT (default 3000)
 ```
 
-Any Node 20+ host works (Render, Fly.io, Railway, Cloud Run). Set `ANTHROPIC_API_KEY` as a secret if you want the Claude features.
-
-The Claude routes are rate-limited per IP and overall (limits at the top of `server.ts`): description suggestions 10 per IP / 200 total per 10 min, reviews 5 / 50 per 10 min, live price checks 2 / 10 per hour. Over the limit, they return `429` with `Retry-After`. Limits are kept in memory, so they apply per server process and reset on restart. Behind a proxy or load balancer (Render, Fly.io, Cloud Run…), set `TRUST_PROXY` to the number of proxy hops (usually `1`) so limits apply per visitor instead of to everyone at once. There's no login, so also set a monthly spend limit for your API key's workspace in the Claude Console as a hard backstop.
+Works on Render, Fly.io, Railway or Cloud Run. The Express server serves the same pages and API, with its own in-memory rate limits (`rateLimit.ts`, limits at the top of `server.ts`: suggestions 10 per IP / 200 total per 10 min, reviews 5 / 50 per 10 min, price checks 2 / 10 per hour). Behind a proxy, set `TRUST_PROXY` to the number of proxy hops (usually `1`).
 
 ## SEO
 
@@ -84,5 +98,7 @@ index.html, about/, calculator/, supabase-pricing-calculator/, guides/, 404.html
                      static pages (landing, method, app entry, Supabase calculator, guides, not found)
 seo.ts               site URL, page list, robots / sitemap / llms.txt generators, sources table
 server.ts            Express: Claude routes, SEO files, security headers, 404 + Vite / static hosting
-claude.ts            Claude API calls (structured outputs, refusal fallback, web fetch for price checks)
+claude.ts            Claude API calls (structured outputs, refusal fallback, web fetch) + HTTP handlers shared by Express and Netlify
+netlify/functions/   Netlify Functions for /api/extract, /api/review, /api/check-prices (rate limits in each config)
+netlify.toml         Netlify build settings
 ```

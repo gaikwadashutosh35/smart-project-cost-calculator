@@ -10,6 +10,17 @@ const VERIFIED_COUNT = CATALOG.filter((c) => c.status === 'verified').length;
 
 /** Site identity. Set SITE_URL in .env once the domain is chosen; HTML uses {{SITE}} which the build replaces. */
 export const SITE = (process.env.SITE_URL || 'https://example.com').replace(/\/$/, '');
+const SITE_CONFIGURED = Boolean(process.env.SITE_URL);
+
+/** Security headers for every page. Express sets them in production; the build writes them to Netlify's _headers. */
+export const SECURITY_HEADERS: Record<string, string> = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'",
+};
 export const BRAND = 'Smart Project Cost Calculator';
 
 /** Every indexable page. `modified` must only change when the page content really changes (it feeds sitemap lastmod). */
@@ -211,6 +222,24 @@ ${SB_NEON_SCENARIOS.map((s) => {
 }).join('\n')}
 </tbody>
 </table>`;
+}
+
+/** Netlify _headers file. Until SITE_URL is set, every page is noindex so a placeholder domain never gets indexed. */
+export function netlifyHeaders(): string {
+  const all = { ...SECURITY_HEADERS, ...(SITE_CONFIGURED ? {} : { 'X-Robots-Tag': 'noindex' }) };
+  return `/*\n${Object.entries(all).map(([k, v]) => `  ${k}: ${v}`).join('\n')}\n# Vite gives built assets content-hashed names, so they never change in place\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`;
+}
+
+/** Write the files Express would otherwise serve, for static hosting (Netlify). Runs after `vite build`. */
+export function writeStaticSeoFiles(outDir: string): void {
+  const files: Record<string, string> = {
+    'robots.txt': robotsTxt(),
+    'sitemap.xml': sitemapXml(),
+    'llms.txt': llmsTxt(),
+    'llms-full.txt': llmsFullTxt(outDir),
+    _headers: netlifyHeaders(),
+  };
+  for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(outDir, name), text);
 }
 
 /** Fill every build-time placeholder in a page. Used by the Vite HTML transform and by /llms-full.txt. */

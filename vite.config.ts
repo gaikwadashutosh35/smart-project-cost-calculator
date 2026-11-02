@@ -2,7 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
-import { fillPlaceholders } from './seo.ts';
+import { fillPlaceholders, writeStaticSeoFiles } from './seo.ts';
 
 export default defineConfig(() => {
   return {
@@ -11,6 +11,8 @@ export default defineConfig(() => {
       tailwindcss(),
       // SITE_URL, catalogue counts and generated tables (see fillPlaceholders in seo.ts).
       { name: 'site-placeholders', transformIndexHtml: (html: string) => fillPlaceholders(html) },
+      // robots.txt, sitemap.xml, llms.txt, llms-full.txt and Netlify _headers, written into dist/ after the build.
+      { name: 'seo-files', apply: 'build', closeBundle: () => writeStaticSeoFiles(path.resolve(import.meta.dirname, 'dist')) },
     ],
     resolve: {
       alias: {

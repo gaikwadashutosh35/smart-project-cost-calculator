@@ -5,10 +5,10 @@ import { AI_MODELS, USD_TO, byId } from './src/calc/catalog';
 import { estimate } from './src/calc/engine';
 import { FEATURE_INFO, PROJECT_INFO } from './src/calc/questionnaire';
 import {
-  AI_USES, FEATURES, FREQUENCIES, GEOS, PROJECT_TYPES, PROVIDER_PREFS, USER_BANDS, WorkloadSchema,
+  AI_USES, AdvancedSchema, AnswersSchema, FEATURES, FREQUENCIES, GEOS, PROJECT_TYPES, PROVIDER_PREFS, TIERS, USER_BANDS, WorkloadSchema,
   type Advanced, type Answers, type Tier, type Workload,
 } from './src/calc/types';
-import { derive } from './src/calc/workload';
+import { defaultWorkload, derive } from './src/calc/workload';
 
 const MODEL = 'claude-opus-5-5';
 const MAX_CONTINUATIONS = 5;
@@ -164,8 +164,17 @@ export function priceItems(a: Answers, w: Workload, adv: Advanced, tier: Tier): 
   return [...new Map(items.map((i) => [i.key, i])).values()];
 }
 
+/** One run reads at most this many pricing pages, to stay well inside serverless time limits (Netlify: 60 s). */
+export const MAX_PRICE_PAGES = 8;
+
+/** Keep the items whose source is among the first `max` distinct pages; the rest are skipped. */
+export function capPages(items: PriceItem[], max: number) {
+  const pages = [...new Set(items.map((i) => i.sourceUrl))].slice(0, max);
+  return { kept: items.filter((i) => pages.includes(i.sourceUrl)), skipped: items.filter((i) => !pages.includes(i.sourceUrl)) };
+}
+
 export async function checkPrices(a: Answers, w: Workload, adv: Advanced, tier: Tier): Promise<PriceCheck[]> {
-  const items = priceItems(a, w, adv, tier);
+  const { kept: items, skipped } = capPages(priceItems(a, w, adv, tier), MAX_PRICE_PAGES);
   if (!items.length) return [];
   const urls = [...new Set(items.map((i) => i.sourceUrl))];
   const result = await ask(
@@ -187,7 +196,7 @@ For every item, report:
   );
   const byKey = new Map(result.checks.map((c) => [c.key, c]));
   const toUsd = (i: PriceItem, v: number) => (i.currency === 'INR' ? v / USD_TO.INR : v);
-  return items.map((i) => {
+  const checked: PriceCheck[] = items.map((i) => {
     const c = byKey.get(i.key);
     const changed = c?.status === 'changed' && c.newPrice !== null && c.newPrice >= 0;
     return {
@@ -197,4 +206,80 @@ For every item, report:
       evidence: c?.evidence ?? 'Not reported.',
     };
   });
+  return [...checked, ...skipped.map((i): PriceCheck => ({
+    key: i.key, item: i.item, unit: i.unit, sourceUrl: i.sourceUrl, currentUsd: toUsd(i, i.current), status: 'not_found', newPriceUsd: null,
+    evidence: `Skipped: one check reads at most ${MAX_PRICE_PAGES} pricing pages. Run it again on a smaller stack, or check the source link.`,
+  }))];
+}
+
+// ---------- HTTP handlers shared by the Express server and the Netlify functions ----------
+
+export interface ApiResult { status: number; body: unknown }
+
+const ScenarioRequest = z.object({
+  answers: AnswersSchema,
+  workloadOverrides: WorkloadSchema.partial(),
+  advanced: AdvancedSchema,
+  tier: z.enum(TIERS),
+});
+
+/** Run a Claude task; map "not configured" and API errors to responses the client can show. */
+async function runClaude(task: () => Promise<unknown>): Promise<ApiResult> {
+  try {
+    return { status: 200, body: { available: true, result: await task() } };
+  } catch (error) {
+    if (error instanceof ClaudeUnavailable || error instanceof Anthropic.AuthenticationError)
+      return { status: 200, body: { available: false, error: 'Claude is not configured. Set ANTHROPIC_API_KEY on the server and restart or redeploy.' } };
+    if (error instanceof Anthropic.RateLimitError) return { status: 429, body: { available: true, error: 'Claude is rate-limited right now — try again in a minute.' } };
+    if (error instanceof Anthropic.APIError) {
+      console.warn('Claude API error:', error.status, error.message);
+      return { status: 502, body: { available: true, error: `Claude API error (${error.status ?? 'network'}). Try again.` } };
+    }
+    console.warn('Claude task failed:', error);
+    return { status: 502, body: { available: true, error: error instanceof Error ? error.message : 'Claude request failed.' } };
+  }
+}
+
+function scenario(body: unknown) {
+  const parsed = ScenarioRequest.safeParse(body);
+  if (!parsed.success) return null;
+  const { answers, workloadOverrides, advanced, tier } = parsed.data;
+  return { answers, workload: { ...defaultWorkload(answers), ...workloadOverrides }, advanced, tier };
+}
+
+const INVALID: ApiResult = { status: 400, body: { error: 'Invalid scenario.' } };
+
+/** Suggest questionnaire answers from a free-text description. The client asks the user to confirm before applying. */
+export async function handleExtract(body: unknown): Promise<ApiResult> {
+  const raw = (body as { text?: unknown } | null)?.text;
+  const text = typeof raw === 'string' ? raw.slice(0, 2000) : '';
+  if (!text.trim()) return { status: 400, body: { error: 'Description is required.' } };
+  return runClaude(() => extractProject(text));
+}
+
+/** Claude reviews workload assumptions and the chosen stack (never prices). */
+export async function handleReview(body: unknown): Promise<ApiResult> {
+  const s = scenario(body);
+  return s ? runClaude(() => reviewEstimate(s.answers, s.workload, s.advanced, s.tier)) : INVALID;
+}
+
+/** Claude reads the official pricing pages for the services in this estimate and reports changed prices. */
+export async function handleCheckPrices(body: unknown): Promise<ApiResult> {
+  const s = scenario(body);
+  return s ? runClaude(() => checkPrices(s.answers, s.workload, s.advanced, s.tier)) : INVALID;
+}
+
+const MAX_BODY_CHARS = 50_000;
+
+/** Adapt a handler to a Web-standard Request → Response function (Netlify Functions). */
+export function webHandler(handle: (body: unknown) => Promise<ApiResult>) {
+  return async (req: Request): Promise<Response> => {
+    if (req.method !== 'POST') return Response.json({ error: 'Method not allowed.' }, { status: 405, headers: { Allow: 'POST' } });
+    const text = await req.text();
+    if (text.length > MAX_BODY_CHARS) return Response.json({ error: 'Request too large.' }, { status: 413 });
+    let body: unknown;
+    try { body = JSON.parse(text); } catch { return Response.json({ error: 'Invalid JSON.' }, { status: 400 }); }
+    const r = await handle(body);
+    return Response.json(r.body, { status: r.status });
+  };
 }

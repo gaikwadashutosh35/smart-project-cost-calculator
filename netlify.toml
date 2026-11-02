@@ -1,0 +1,23 @@
+# Netlify: static pages from Vite + three serverless functions for the Claude features.
+# Set ANTHROPIC_API_KEY and SITE_URL in the Netlify UI (Site configuration → Environment variables);
+# values in this file are NOT available to functions.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+
+# Security headers, noindex (until SITE_URL is set) and asset caching are in dist/_headers, written by the build (seo.ts).
+# 404.html at the publish root is served automatically for unknown paths.
+
+# After the custom domain is live, send the netlify.app address to it so search engines see one copy of the site:
+# [[redirects]]
+#   from = "https://YOUR-SITE-NAME.netlify.app/*"
+#   to = "https://YOUR-DOMAIN/:splat"
+#   status = 301
+#   force = true

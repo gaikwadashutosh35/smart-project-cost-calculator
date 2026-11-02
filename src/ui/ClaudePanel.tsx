@@ -11,7 +11,8 @@ type Call<T> = { state: 'idle' } | { state: 'loading' } | { state: 'error'; mess
 async function post<T>(url: string, body: unknown): Promise<T> {
   const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const data = await r.json().catch(() => ({}));
-  if (!data.result) throw new Error(data.error ?? `Request failed (${r.status}).`);
+  // A 429 from the host's rate limiter has no JSON body.
+  if (!data.result) throw new Error(data.error ?? (r.status === 429 ? 'Too many requests — wait a few minutes and try again.' : `Request failed (${r.status}).`));
   return data.result as T;
 }
 

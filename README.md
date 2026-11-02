@@ -52,12 +52,13 @@ The Claude routes are rate-limited per IP and overall (limits at the top of `ser
 
 ## SEO
 
-Pages: `/` (static landing page, indexable), `/about/` (method and every pricing source, indexable), `/calculator/` (the app, `noindex, follow`: its content is rendered by JavaScript, so the landing page is the one that ranks), plus a real `404`.
+Pages: `/` (static landing page, indexable), `/supabase-pricing-calculator/` (Supabase-only calculator with generated pricing tables, indexable), `/guides/supabase-vs-neon-pricing/` (comparison guide, indexable), `/about/` (method and every pricing source, indexable), `/calculator/` (the app, `noindex, follow`: its content is rendered by JavaScript, so the landing page is the one that ranks), plus a real `404`.
 
 - Set `SITE_URL` (see `.env.example`) to the live origin. It feeds canonical URLs, Open Graph tags, JSON-LD, `sitemap.xml`, `robots.txt` and `llms.txt`. Until the request host matches it, production responses carry `X-Robots-Tag: noindex`, so preview hosts (`*.onrender.com`, `*.fly.dev`) stay out of search.
 - `robots.txt`, `sitemap.xml`, `llms.txt` and `llms-full.txt` are served by `server.ts` from `seo.ts`. When you change a page's content, update its `modified` date in `seo.ts` and its visible "Updated" date and JSON-LD `dateModified`.
 - The pricing-sources table on `/about/` is generated from the catalogue at build time.
-- Keyword research: `seo/keywords-2026-11-02.csv`.
+- Keyword research: `seo/keywords-2026-11-02.csv`; content briefs: `seo/briefs/`.
+- Pricing tables, worked examples and catalogue counts on these pages are generated from the catalogue at build time (`fillPlaceholders` in `seo.ts`). `compare.test.ts` fails if a price change alters totals that page prose quotes: update the text and its dates together.
 
 After the first deploy on the real domain:
 
@@ -79,7 +80,8 @@ src/calc/            framework-free logic (unit tested)
   engine.ts          plan selection, free tiers, tiers, overrides, AI tokens, totals
   export.ts          CSV, text summary, share links, money formatting
 src/ui/              React components (wizard, results, simulator, advanced mode, print report)
-index.html, about/, calculator/, 404.html   static pages (landing, method, app entry, not found)
+index.html, about/, calculator/, supabase-pricing-calculator/, guides/, 404.html
+                     static pages (landing, method, app entry, Supabase calculator, guides, not found)
 seo.ts               site URL, page list, robots / sitemap / llms.txt generators, sources table
 server.ts            Express: Claude routes, SEO files, security headers, 404 + Vite / static hosting
 claude.ts            Claude API calls (structured outputs, refusal fallback, web fetch for price checks)

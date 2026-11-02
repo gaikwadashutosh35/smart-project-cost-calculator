@@ -2,7 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
-import { fillPlaceholders } from './seo';
+import { fillPlaceholders } from './seo.ts';
 
 export default defineConfig(() => {
   return {
@@ -14,18 +14,18 @@ export default defineConfig(() => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(import.meta.dirname, '.'),
       },
     },
     build: {
       rollupOptions: {
         input: {
-          home: path.resolve(__dirname, 'index.html'),
-          calculator: path.resolve(__dirname, 'calculator/index.html'),
-          about: path.resolve(__dirname, 'about/index.html'),
-          supabase: path.resolve(__dirname, 'supabase-pricing-calculator/index.html'),
-          sbVsNeon: path.resolve(__dirname, 'guides/supabase-vs-neon-pricing/index.html'),
-          notFound: path.resolve(__dirname, '404.html'),
+          home: path.resolve(import.meta.dirname, 'index.html'),
+          calculator: path.resolve(import.meta.dirname, 'calculator/index.html'),
+          about: path.resolve(import.meta.dirname, 'about/index.html'),
+          supabase: path.resolve(import.meta.dirname, 'supabase-pricing-calculator/index.html'),
+          sbVsNeon: path.resolve(import.meta.dirname, 'guides/supabase-vs-neon-pricing/index.html'),
+          notFound: path.resolve(import.meta.dirname, '404.html'),
         },
       },
     },

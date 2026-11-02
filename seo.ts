@@ -1,9 +1,9 @@
 import 'dotenv/config'; // load .env before SITE_URL is read (imports run before module code)
 import fs from 'node:fs';
 import path from 'node:path';
-import { AI_MODELS, CATALOG, FX_DATE, FX_SOURCE, USD_TO, byId } from './src/calc/catalog';
-import { COMPUTE, supabaseBill, type SupabaseUsage } from './src/calc/supabase';
-import { SB_NEON_SCENARIOS, compareRow } from './src/calc/compare';
+import { AI_MODELS, CATALOG, FX_DATE, FX_SOURCE, USD_TO, byId } from './src/calc/catalog.ts';
+import { COMPUTE, supabaseBill, type SupabaseUsage } from './src/calc/supabase.ts';
+import { SB_NEON_SCENARIOS, compareRow } from './src/calc/compare.ts';
 
 const PLAN_COUNT = CATALOG.length;
 const VERIFIED_COUNT = CATALOG.filter((c) => c.status === 'verified').length;

@@ -1,4 +1,4 @@
-import type { Answers, AiUse, Feature, ProjectType } from './types';
+import type { Answers, AiUse, Feature, ProjectType } from './types.ts';
 
 export const PROJECT_INFO: Record<ProjectType, { title: string; desc: string }> = {
   ai_saas: { title: 'AI SaaS Application', desc: 'Subscription software with AI features' },

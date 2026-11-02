@@ -1,7 +1,7 @@
-import { AI_MODELS, CHECKED, USD_TO, byId, modelPrice, type AiModel, type CatalogEntry, type Meter, type ModelClass, type UsageKey } from './catalog';
-import { PURPOSE, recommend, type Selection } from './recommend';
-import type { Advanced, Answers, Estimate, Geo, Group, LineItem, ModelConfig, ServiceCost, Slot, Tier, Workload } from './types';
-import { derive, type Derived } from './workload';
+import { AI_MODELS, CHECKED, USD_TO, byId, modelPrice, type AiModel, type CatalogEntry, type Meter, type ModelClass, type UsageKey } from './catalog.ts';
+import { PURPOSE, recommend, type Selection } from './recommend.ts';
+import type { Advanced, Answers, Estimate, Geo, Group, LineItem, ModelConfig, ServiceCost, Slot, Tier, Workload } from './types.ts';
+import { derive, type Derived } from './workload.ts';
 
 export const HOURS_PER_MONTH = 730;
 export const today = () => new Date().toISOString().slice(0, 10);

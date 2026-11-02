@@ -1,4 +1,4 @@
-import type { Answers, ProjectType, UserBand, Workload } from './types';
+import type { Answers, ProjectType, UserBand, Workload } from './types.ts';
 
 export const REGISTERED: Record<UserBand, number> = {
   testing: 25, '100-500': 300, '500-5k': 2500, '5k-25k': 15000, '25k-100k': 60000, '100k-500k': 300000, '500k+': 750000,

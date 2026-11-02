@@ -1,5 +1,5 @@
-import { byId, type UsageKey } from './catalog';
-import { meterCost } from './engine';
+import { byId, type UsageKey } from './catalog.ts';
+import { meterCost } from './engine.ts';
 
 /** Supabase-only bill for the /supabase-pricing-calculator/ page, priced from the same catalogue entries as the main engine. */
 

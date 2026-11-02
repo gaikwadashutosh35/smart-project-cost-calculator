@@ -1,4 +1,4 @@
-import type { Geo, PriceStatus, Slot } from './types';
+import type { Geo, PriceStatus, Slot } from './types.ts';
 
 /**
  * Pricing catalogue. Every number was read from the linked official page on `checked`

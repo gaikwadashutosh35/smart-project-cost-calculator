@@ -1,6 +1,6 @@
-import { byId } from './catalog';
-import { meterCost } from './engine';
-import { COMPUTE, supabaseBill, type BillLine } from './supabase';
+import { byId } from './catalog.ts';
+import { meterCost } from './engine.ts';
+import { COMPUTE, supabaseBill, type BillLine } from './supabase.ts';
 
 /** Scenarios for /guides/supabase-vs-neon-pricing/. Compute is matched by memory: Micro 1 GB ↔ 0.25 CU, Small 2 GB ↔ 0.5 CU, Medium 4 GB ↔ 1 CU. */
 export interface CompareScenario {

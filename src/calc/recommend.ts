@@ -1,7 +1,7 @@
-import { USD_TO } from './catalog';
-import { BUDGET_INFO } from './questionnaire';
-import type { Advanced, Answers, Estimate, Feature, Slot, Tier } from './types';
-import type { Derived } from './workload';
+import { USD_TO } from './catalog.ts';
+import { BUDGET_INFO } from './questionnaire.ts';
+import type { Advanced, Answers, Estimate, Feature, Slot, Tier } from './types.ts';
+import type { Derived } from './workload.ts';
 
 /** A slot to fill and the plan family the engine may choose from (cheapest eligible plan wins). */
 export interface Selection { slot: Slot; family: string[]; why: string; minInstances?: number }

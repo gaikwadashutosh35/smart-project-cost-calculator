@@ -180,7 +180,9 @@ For every item, report:
     `<items>\n${JSON.stringify(items.map(({ key, item, unit, currency, current, sourceUrl }) => ({ key, item, unit, currency, current, sourceUrl })), null, 2)}\n</items>`,
     {
       effort: 'medium',
-      tools: [{ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: urls.length + 3, max_content_tokens: 30000, allowed_domains: [...new Set(urls.map((u) => new URL(u).hostname))] }],
+      // No allowed_domains: an org-level web-fetch policy rejects the whole request if any listed domain is outside it.
+      // The org policy still applies per fetch; blocked pages come back as "not_found".
+      tools: [{ type: 'web_fetch_20260209', name: 'web_fetch', max_uses: urls.length + 3, max_content_tokens: 30000 }],
     },
   );
   const byKey = new Map(result.checks.map((c) => [c.key, c]));

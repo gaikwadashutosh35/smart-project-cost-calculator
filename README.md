@@ -50,6 +50,18 @@ Nothing Claude suggests is applied until you click Apply. Without a key the app 
 
 Until `SITE_URL` is set, every page is served with `X-Robots-Tag: noindex`, so a placeholder domain never gets indexed.
 
+Deploying from your machine, build first and then deploy that output:
+
+```bash
+npx netlify-cli build
+```
+
+```bash
+npx netlify-cli deploy --prod
+```
+
+`netlify build` runs `npm run build` with the site's Netlify environment variables (`SITE_URL`). Don't rely on `netlify deploy --build` alone: the CLI reads `dist/_headers` before its build step, so a stale file from an earlier local build (for example one with `noindex`) can be deployed. Test on a free draft deploy (`netlify deploy`, without `--prod`) before spending a production deploy.
+
 **Netlify limits that shape this setup** (checked 2026-11-02):
 - Functions have a fixed 60-second limit. The live price check reads at most 8 pricing pages per run (`MAX_PRICE_PAGES` in `claude.ts`) to stay under it; the rest are reported as skipped.
 - Rate limits are set in each function's `config`: price check 1 per visitor per 3 minutes, review 3 per 3 minutes. Description suggestions are not limited (about 1 cent each). The Free plan allows 2 rules per project and windows of at most 180 seconds, and there is no site-wide cap below Enterprise — hence the Claude Console spend limit.

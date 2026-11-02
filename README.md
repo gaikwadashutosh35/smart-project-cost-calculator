@@ -102,3 +102,7 @@ claude.ts            Claude API calls (structured outputs, refusal fallback, web
 netlify/functions/   Netlify Functions for /api/extract, /api/review, /api/check-prices (rate limits in each config)
 netlify.toml         Netlify build settings
 ```
+
+## Licence
+
+MIT — see [LICENSE](LICENSE). Contributors follow the [Code of Conduct](CODE_OF_CONDUCT.md). Hosted on [Netlify](https://www.netlify.com).

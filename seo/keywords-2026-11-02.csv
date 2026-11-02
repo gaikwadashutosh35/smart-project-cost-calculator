@@ -1,0 +1,15 @@
+keyword,volume (US / India per month; DataForSEO via OpenSEO 2026-11-02),difficulty (US / India),intent,who ranks (top results 2026-11-02),page type in SERP,target page,decision
+saas infrastructure cost calculator,too small to measure,-,tool,"spendark.com, inqodo (Product Hunt), getmonetizely.com guide, agentcalc scaling estimator",tools + guides,/,make this the landing page's main keyword
+how much does it cost to run a saas,too small to measure,-,informational,(not checked),,/guides/saas-hosting-cost/,proposed guide (autocomplete confirms phrasing)
+saas infrastructure cost,too small to measure,-,informational,(not checked),,/guides/saas-hosting-cost/,variant of the guide above
+how much does it cost to run an ai chatbot,too small to measure,-,informational,"bland.ai, boei.help, quickchat.ai, denser.ai, customgpt.ai (vendor blogs, vague ranges)",guides,/guides/ai-chatbot-cost-per-month/,proposed guide: real token math on verified prices
+cost to run enterprise wide ai chatbot for 500 users,too small to measure,-,informational,(not checked),,/guides/ai-chatbot-cost-per-month/,answer as an H2 section
+supabase vs neon pricing,10 / -,0 / -,commercial comparison,"makerkit.dev calculator, bytebase.com, jetadmin.io, costbench.com, dev.to",comparison articles + calculator,/guides/supabase-vs-neon-pricing/,proposed guide: verified prices + cost at real user counts
+supabase vs neon free tier,10 / -,- / -,commercial comparison,(not checked),,/guides/supabase-vs-neon-pricing/,answer as an H2 section
+project cost calculator,40 / 20,6 / 21,mixed (construction / generic project budgeting),"timechamp.io, stackct.com, elementor.com, mastt.com (construction), WordPress plugins",generic + construction tools,none,drop as main keyword: wrong intent
+llm api cost calculator,too small to measure,-,tool,"helicone.ai (300+ models), calchub, veprompts, spendproxy",dedicated AI-pricing tools,none,skip for now: page type and coverage mismatch
+vercel pricing calculator,20 / 10,6 / -,tool,"makerkit.dev, usagepricing.com, toolradar.com, projectcostestimator.com",Vercel-specific calculators,none,skip for now: would need a Vercel-only tool
+supabase pricing calculator,320 / 260,1 / 1,tool (labelled informational),(not checked),,/supabase-pricing-calculator/,TOP OPPORTUNITY: highest volume and lowest difficulty found
+openai api cost per month,too small to measure,-,informational,(not checked; OpenAI's own pricing page likely ranks),,later,later candidate
+render backend hosting cost,too small to measure,-,informational,(not checked),,later,later candidate: Render vs Fly.io backend cost guide
+how much does it cost to host an app on aws,too small to measure,-,informational,(not checked),,later,later candidate

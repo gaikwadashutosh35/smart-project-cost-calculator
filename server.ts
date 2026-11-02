@@ -1,19 +1,49 @@
+import 'dotenv/config';
+import fs from 'node:fs';
+import path from 'node:path';
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
+import { createServer as createViteServer, type ViteDevServer } from 'vite';
 import Anthropic from '@anthropic-ai/sdk';
-import dotenv from 'dotenv';
 import { z } from 'zod';
 import { ClaudeUnavailable, checkPrices, extractProject, reviewEstimate } from './claude';
 import { rateLimit } from './rateLimit';
+import { SITE, llmsFullTxt, llmsTxt, robotsTxt, sitemapXml } from './seo';
 import { AdvancedSchema, AnswersSchema, TIERS, WorkloadSchema } from './src/calc/types';
 import { defaultWorkload } from './src/calc/workload';
 
-dotenv.config();
+const isProd = process.env.NODE_ENV === 'production';
+const port = process.env.PORT || 3000;
+const htmlRoot = isProd ? 'dist' : '.';
 
 const app = express();
 // Behind a load balancer / PaaS proxy, set TRUST_PROXY to the number of proxy hops so req.ip is the real client.
 if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY));
+
+// Security headers (the Express equivalent of a Cloudflare/Netlify _headers file).
+const siteHost = new URL(SITE).hostname;
+app.use((req, res, next) => {
+  res.set({
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+  });
+  if (isProd) {
+    res.set({
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'",
+    });
+    // Any host other than the real domain (e.g. *.onrender.com, *.fly.dev) duplicates the site: keep it out of search.
+    if (req.hostname !== siteHost) res.set('X-Robots-Tag', 'noindex');
+  }
+  next();
+});
 app.use(express.json({ limit: '50kb' }));
+
+app.get('/robots.txt', (_req, res) => res.type('text/plain').send(robotsTxt()));
+app.get('/sitemap.xml', (_req, res) => res.type('application/xml').send(sitemapXml()));
+app.get('/llms.txt', (_req, res) => res.type('text/plain').send(llmsTxt()));
+app.get('/llms-full.txt', (_req, res) => res.type('text/plain').send(llmsFullTxt(htmlRoot)));
 
 const MINUTE = 60_000;
 // Per-IP and overall caps per endpoint, sized to each call's cost. Tune here.
@@ -76,19 +106,22 @@ app.post('/api/check-prices', limits.checkPrices, (req, res) => {
   if (s) return claudeRoute(res, () => checkPrices(s.answers, s.workload, s.advanced, s.tier));
 });
 
-const isProd = process.env.NODE_ENV === 'production';
-const port = process.env.PORT || 3000;
-
 async function startServer() {
+  let vite: ViteDevServer | undefined;
   if (!isProd) {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
+    // 'mpa': each page has its own HTML (/, /calculator/, /about/); unknown paths fall through to the 404 below.
+    vite = await createViteServer({ server: { middlewareMode: true }, appType: 'mpa' });
     app.use(vite.middlewares);
   } else {
     app.use(express.static('dist'));
   }
+
+  // Real 404 status for unknown pages.
+  app.use(async (req, res) => {
+    let html = fs.readFileSync(path.resolve(htmlRoot, '404.html'), 'utf8');
+    if (vite) html = await vite.transformIndexHtml(req.originalUrl, html);
+    res.status(404).type('html').send(html);
+  });
 
   app.listen(Number(port), '0.0.0.0', () => {
     console.log(`Cloud Architecture & Cost Engine running on http://0.0.0.0:${port}`);

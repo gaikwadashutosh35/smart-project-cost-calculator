@@ -2,13 +2,29 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
+import { SITE, sourcesTableHtml } from './seo';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      // Absolute URLs in canonical / og / JSON-LD come from SITE_URL (see seo.ts).
+      { name: 'site-url', transformIndexHtml: (html: string) => html.replaceAll('{{SITE}}', SITE).replace('<!--PRICING_SOURCES-->', () => sourcesTableHtml()) },
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+      },
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          home: path.resolve(__dirname, 'index.html'),
+          calculator: path.resolve(__dirname, 'calculator/index.html'),
+          about: path.resolve(__dirname, 'about/index.html'),
+          notFound: path.resolve(__dirname, '404.html'),
+        },
       },
     },
     server: {

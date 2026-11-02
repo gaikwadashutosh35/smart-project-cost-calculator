@@ -3,19 +3,151 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Project Cost Calculator</title>
-    <meta name="description" content="Describe your project and get a recommended architecture with transparent monthly and annual cost estimates." />
-    <meta property="og:title" content="Smart Project Cost Calculator" />
-    <meta property="og:description" content="Describe your project and get a recommended architecture with transparent monthly and annual cost estimates." />
+    <title>SaaS &amp; App Hosting Cost Calculator (Free)</title>
+    <meta name="description" content="Estimate what your SaaS or app costs to run each month: hosting, database, AI tokens, email and APIs. Three architectures, official prices, free." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="{{SITE}}/" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Smart Project Cost Calculator" />
+    <meta property="og:url" content="{{SITE}}/" />
+    <meta property="og:title" content="SaaS and app hosting cost calculator: what will your app cost to run?" />
+    <meta property="og:description" content="Four questions in, three costed architectures out — hosting, database, AI tokens and APIs, with the official pricing link for every price." />
+    <meta property="og:image" content="{{SITE}}/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icon48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/index.css" />
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"Organization","@id":"{{SITE}}/#org","name":"Smart Project Cost Calculator","url":"{{SITE}}/","logo":"{{SITE}}/logo-512.png"},
+      {"@type":"WebSite","@id":"{{SITE}}/#website","url":"{{SITE}}/","name":"Smart Project Cost Calculator","publisher":{"@id":"{{SITE}}/#org"}},
+      {"@type":"WebPage","@id":"{{SITE}}/#webpage","url":"{{SITE}}/","name":"SaaS & App Hosting Cost Calculator","isPartOf":{"@id":"{{SITE}}/#website"},"about":{"@id":"{{SITE}}/#app"},"datePublished":"2026-11-02","dateModified":"2026-11-02","primaryImageOfPage":{"@type":"ImageObject","url":"{{SITE}}/og.jpg"}},
+      {"@type":"SoftwareApplication","@id":"{{SITE}}/#app","name":"Smart Project Cost Calculator","url":"{{SITE}}/calculator/","applicationCategory":"BusinessApplication","operatingSystem":"Web browser","description":"Estimates the monthly and annual cost of running a software project — hosting, database, storage, AI model usage, email, SMS, monitoring and MCP servers — across three architectures.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","@id":"{{SITE}}/#org","name":"Smart Project Cost Calculator","url":"{{SITE}}/","logo":{"@type":"ImageObject","url":"{{SITE}}/logo-512.png"}}},
+      {"@type":"FAQPage","mainEntity":[
+        {"@type":"Question","name":"Is this hosting cost calculator free?","acceptedAnswer":{"@type":"Answer","text":"Yes. The calculator is free to use and needs no account. Your scenarios are saved in your own browser."}},
+        {"@type":"Question","name":"Are the prices live?","acceptedAnswer":{"@type":"Answer","text":"They are a dated snapshot. Each price was read from the provider's official pricing page on 1 November 2026, and every estimate links to that page. Prices that could not be confirmed are labelled as estimates."}},
+        {"@type":"Question","name":"Does the estimate include payment gateway fees and taxes?","acceptedAnswer":{"@type":"Answer","text":"No. Payment gateways such as Razorpay and Stripe charge a percentage of your revenue, so they are listed separately, and taxes such as GST or VAT are excluded."}},
+        {"@type":"Question","name":"Why doesn't the cost grow in a straight line with users?","acceptedAnswer":{"@type":"Answer","text":"Free tiers run out at different points, plans step up, servers are added only when peak traffic needs them, and AI token costs grow with active users rather than sign-ups. The growth simulator re-runs the full estimate at each user count."}},
+        {"@type":"Question","name":"Which currencies does it show?","acceptedAnswer":{"@type":"Answer","text":"Indian rupees, US dollars, euros and British pounds, converted at European Central Bank reference rates of 30 October 2026."}}
+      ]}
+    ]}
+    </script>
   </head>
   <body class="bg-canvas text-ink antialiased">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <header class="bg-surface border-b border-line">
+      <nav class="max-w-5xl mx-auto px-4 h-16 flex items-center gap-4" aria-label="Main">
+        <a href="/" class="font-bold tracking-[-0.2px]">Smart Project Cost Calculator</a>
+        <a href="/about/" class="ml-auto text-sm text-muted hover:text-primary">How it works</a>
+        <a href="/calculator/" class="inline-flex items-center min-h-11 rounded-full bg-primary text-white px-5 text-sm font-bold hover:bg-primary-deep">Open calculator</a>
+      </nav>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+      <p class="eyebrow text-primary">Free · no sign-up</p>
+      <h1 class="text-[36px] sm:text-[52px] leading-[1.1] font-light tracking-[-1.2px] mt-3">App and SaaS hosting cost calculator: what will your app cost to run?</h1>
+      <p class="text-lg text-muted mt-5 max-w-3xl">
+        Answer four questions — what you are building, how many people will use it, whether it uses AI, and your monthly budget — and get three architectures with their monthly and annual costs.
+        Hosting, database, storage, AI tokens, email, SMS and monitoring are priced per service, and every price links to the provider's official pricing page.
+      </p>
+      <div class="flex flex-wrap items-center gap-3 mt-7">
+        <a href="/calculator/" class="inline-flex items-center min-h-11 rounded-full bg-primary text-white px-6 py-3 font-bold shadow-card hover:bg-primary-deep">Estimate my costs</a>
+        <a href="/about/" class="inline-flex items-center min-h-11 rounded-full border border-line bg-surface px-6 py-3 font-semibold hover:border-primary/50 hover:text-primary">See how it calculates</a>
+      </div>
+      <p class="text-sm text-muted mt-4">Updated <time datetime="2026-11-02">2 November 2026</time> · prices checked 1 November 2026</p>
+
+      <section class="mt-14 bg-surface border border-line rounded-2xl shadow-card p-5 sm:p-7">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">What does it cost to run an AI SaaS app with 2,500 users?</h2>
+        <p class="mt-3 text-muted">
+          A worked example from the calculator: an AI SaaS app in India with 2,500 registered users, about 1,000 of them active each month,
+          an AI chatbot answering 60,000 requests a month (about 2,000 input and 400 output tokens each), subscriptions, payments and email.
+        </p>
+        <div class="overflow-x-auto mt-5">
+          <table class="w-full text-sm tabular-nums">
+            <thead>
+              <tr class="text-left text-muted border-b border-line"><th class="py-2.5 pr-4 font-medium">Architecture</th><th class="py-2.5 pr-4 font-medium">Main services</th><th class="py-2.5 pr-4 font-medium">Per month</th><th class="py-2.5 font-medium">Per year</th></tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-line/70 align-top"><td class="py-2.5 pr-4 font-semibold">Budget</td><td class="py-2.5 pr-4">Cloudflare Pages and Workers (free), Neon PostgreSQL, Clerk (free tier), GPT-6 Luna</td><td class="py-2.5 pr-4">$59.76 (₹5,674)</td><td class="py-2.5">₹68,093</td></tr>
+              <tr class="border-b border-line/70 align-top"><td class="py-2.5 pr-4 font-semibold">Recommended</td><td class="py-2.5 pr-4">Vercel Pro, Supabase Pro (database + auth), GPT-6 Luna</td><td class="py-2.5 pr-4">$84.77 (₹8,049)</td><td class="py-2.5">₹96,590</td></tr>
+              <tr class="align-top"><td class="py-2.5 pr-4 font-semibold">Scalable</td><td class="py-2.5 pr-4">Vercel Pro, Fly.io autoscaling servers, Supabase Pro, GPT-6 Luna</td><td class="py-2.5 pr-4">$91.60 (₹8,698)</td><td class="py-2.5">₹1,04,376</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-4 text-sm text-muted">
+          In every option the AI model costs $18.60 a month and transactional email $20 (6,000 emails a month is above Resend's free 3,000).
+          Payment gateway fees are a share of revenue and are not included. Your numbers will differ — <a class="text-primary underline" href="/calculator/">run your own estimate</a>.
+        </p>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">What prices does the calculator use?</h2>
+        <p class="mt-3 max-w-3xl">
+          The calculator prices 94 plans from more than 30 providers — including Vercel, Cloudflare, Supabase, Neon, Render, Fly.io, AWS, Google Cloud, Azure, Clerk, Resend, Twilio and MSG91 —
+          plus 12 AI models from OpenAI, Anthropic, Google and DeepSeek. Each price was read from the provider's official pricing page on 1 November 2026:
+          90 of the 94 plans are verified, and the rest are labelled as estimates. Currency conversion uses European Central Bank reference rates.
+          <a class="text-primary underline" href="/about/">See the method and every source</a>.
+        </p>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">How does the hosting cost calculator work?</h2>
+        <ol class="mt-4 space-y-3 list-decimal pl-5 max-w-3xl">
+          <li><b>Describe the project.</b> Pick a type (AI SaaS, e-commerce, mobile app, marketplace, API…) and its features, or describe it in your own words.</li>
+          <li><b>Estimate users.</b> Choose expected users, how often they use it and where they are. The calculator turns this into monthly active users, requests, database operations, storage and bandwidth — all editable.</li>
+          <li><b>Add AI only if you need it.</b> Choose usage level and models; it prices input, cached and output tokens per model, and MCP server hosting for agents.</li>
+          <li><b>Set a budget and priority.</b> Lowest cost, balanced, performance or enterprise reliability, plus a preferred cloud and currency.</li>
+          <li><b>Compare three architectures.</b> Budget, Recommended and Scalable, each with every service, why it is needed, the formula behind its cost and the official pricing link.</li>
+        </ol>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">What costs does it estimate?</h2>
+        <div class="overflow-x-auto mt-4">
+          <table class="w-full text-sm bg-surface border border-line rounded-2xl">
+            <thead><tr class="text-left text-muted border-b border-line"><th class="px-4 py-3 font-medium">Cost</th><th class="px-4 py-3 font-medium">Examples of what is priced</th></tr></thead>
+            <tbody>
+              <tr class="border-b border-line/70"><td class="px-4 py-2.5 font-medium">Frontend and backend hosting</td><td class="px-4 py-2.5">Vercel, Cloudflare Pages and Workers, Render, Fly.io, AWS Lambda / Fargate / EC2, Cloud Run, Azure Container Apps</td></tr>
+              <tr class="border-b border-line/70"><td class="px-4 py-2.5 font-medium">Database and cache</td><td class="px-4 py-2.5">Supabase, Neon, AWS RDS, Cloud SQL, Azure PostgreSQL, MongoDB Atlas, DynamoDB, Upstash Redis</td></tr>
+              <tr class="border-b border-line/70"><td class="px-4 py-2.5 font-medium">AI usage</td><td class="px-4 py-2.5">Tokens for OpenAI, Claude, Gemini and DeepSeek models, with prompt caching and traffic split across models</td></tr>
+              <tr class="border-b border-line/70"><td class="px-4 py-2.5 font-medium">APIs and services</td><td class="px-4 py-2.5">Authentication, email, SMS / OTP, realtime, search, image processing, analytics, error monitoring</td></tr>
+              <tr><td class="px-4 py-2.5 font-medium">AI agents</td><td class="px-4 py-2.5">Hosting for remote MCP servers, background tasks and paid tool subscriptions (MCP itself has no per-call fee)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">Frequently asked questions</h2>
+        <div class="mt-4 space-y-5 max-w-3xl">
+          <div><h3 class="font-semibold">Is this hosting cost calculator free?</h3><p class="mt-1 text-muted">Yes. The calculator is free to use and needs no account. Your scenarios are saved in your own browser.</p></div>
+          <div><h3 class="font-semibold">Are the prices live?</h3><p class="mt-1 text-muted">They are a dated snapshot. Each price was read from the provider's official pricing page on 1 November 2026, and every estimate links to that page. Prices that could not be confirmed are labelled as estimates.</p></div>
+          <div><h3 class="font-semibold">Does the estimate include payment gateway fees and taxes?</h3><p class="mt-1 text-muted">No. Payment gateways such as Razorpay and Stripe charge a percentage of your revenue, so they are listed separately, and taxes such as GST or VAT are excluded.</p></div>
+          <div><h3 class="font-semibold">Why doesn't the cost grow in a straight line with users?</h3><p class="mt-1 text-muted">Free tiers run out at different points, plans step up, servers are added only when peak traffic needs them, and AI token costs grow with active users rather than sign-ups. The growth simulator re-runs the full estimate at each user count.</p></div>
+          <div><h3 class="font-semibold">Which currencies does it show?</h3><p class="mt-1 text-muted">Indian rupees, US dollars, euros and British pounds, converted at European Central Bank reference rates of 30 October 2026.</p></div>
+        </div>
+      </section>
+
+      <section class="mt-14 border-t border-line pt-8">
+        <h2 class="text-lg font-bold">Read next</h2>
+        <ul class="mt-3 space-y-2">
+          <li><a class="text-primary underline" href="/about/">How the estimates are calculated: formulas, assumptions and pricing sources</a></li>
+          <li><a class="text-primary underline" href="/calculator/">Open the calculator and estimate your own project</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="border-t border-line bg-surface">
+      <div class="max-w-5xl mx-auto px-4 py-6 text-sm text-muted flex flex-wrap gap-x-6 gap-y-2">
+        <span>Smart Project Cost Calculator</span>
+        <a href="/calculator/" class="hover:text-primary">Calculator</a>
+        <a href="/about/" class="hover:text-primary">How it works</a>
+      </div>
+    </footer>
   </body>
 </html>
-

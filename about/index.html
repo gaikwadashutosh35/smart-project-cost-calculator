@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How App Hosting Cost Estimates Are Calculated</title>
+    <meta name="description" content="The formulas, default assumptions and official pricing sources behind the SaaS and app hosting cost calculator, with the date every price was checked." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="{{SITE}}/about/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Smart Project Cost Calculator" />
+    <meta property="og:url" content="{{SITE}}/about/" />
+    <meta property="og:title" content="How the project cost estimates are calculated" />
+    <meta property="og:description" content="Formulas, default assumptions and every official pricing source, with check dates." />
+    <meta property="og:image" content="{{SITE}}/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icon48.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/index.css" />
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@graph":[
+      {"@type":"WebPage","@id":"{{SITE}}/about/#webpage","url":"{{SITE}}/about/","name":"How App Hosting Cost Estimates Are Calculated","isPartOf":{"@type":"WebSite","@id":"{{SITE}}/#website","url":"{{SITE}}/","name":"Smart Project Cost Calculator"},"datePublished":"2026-11-02","dateModified":"2026-11-02","breadcrumb":{"@id":"{{SITE}}/about/#breadcrumb"}},
+      {"@type":"Article","headline":"How app hosting cost estimates are calculated","author":{"@type":"Organization","@id":"{{SITE}}/#org","name":"Smart Project Cost Calculator","url":"{{SITE}}/"},"publisher":{"@type":"Organization","@id":"{{SITE}}/#org","name":"Smart Project Cost Calculator","url":"{{SITE}}/","logo":{"@type":"ImageObject","url":"{{SITE}}/logo-512.png"}},"mainEntityOfPage":{"@id":"{{SITE}}/about/#webpage"},"datePublished":"2026-11-02","dateModified":"2026-11-02","image":"{{SITE}}/og.jpg"},
+      {"@type":"BreadcrumbList","@id":"{{SITE}}/about/#breadcrumb","itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Home","item":"{{SITE}}/"},
+        {"@type":"ListItem","position":2,"name":"How estimates are calculated","item":"{{SITE}}/about/"}]}
+    ]}
+    </script>
+  </head>
+  <body class="bg-canvas text-ink antialiased">
+    <header class="bg-surface border-b border-line">
+      <nav class="max-w-5xl mx-auto px-4 h-16 flex items-center gap-4" aria-label="Main">
+        <a href="/" class="font-bold tracking-[-0.2px]">Smart Project Cost Calculator</a>
+        <a href="/calculator/" class="ml-auto inline-flex items-center min-h-11 rounded-full bg-primary text-white px-5 text-sm font-bold hover:bg-primary-deep">Open calculator</a>
+      </nav>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-10 sm:py-14">
+      <nav aria-label="Breadcrumb" class="text-sm text-muted"><a href="/" class="hover:text-primary">Home</a> › How estimates are calculated</nav>
+      <h1 class="text-[34px] sm:text-[44px] leading-[1.12] font-light tracking-[-1px] mt-3">How the cost estimates are calculated</h1>
+      <p class="text-lg text-muted mt-5 max-w-3xl">
+        Every estimate is the sum of individual services. Each service is priced from its provider's published rates and from the usage your answers imply.
+        The prices come from official pricing pages checked on 1 November 2026; the usage comes from default assumptions you can edit in the calculator.
+      </p>
+      <p class="text-sm text-muted mt-4">Updated <time datetime="2026-11-02">2 November 2026</time> · Published by Smart Project Cost Calculator</p>
+
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">How do your answers become usage?</h2>
+        <ul class="mt-4 space-y-2 list-disc pl-5 max-w-3xl">
+          <li><b>Monthly active users</b> = registered users × the share active each month (25% for occasional use up to 70% for business-critical use). Registered and active users are not the same.</li>
+          <li><b>API requests</b> = monthly active users × sessions per user × requests per session. Sessions run from 4 a month (occasional) to 50 (heavy use); requests per session depend on the project type.</li>
+          <li><b>Database operations</b> = API requests × database operations per request.</li>
+          <li><b>Bandwidth</b> = page views × page weight + API responses + file downloads.</li>
+          <li><b>Peak traffic</b> = average requests per second × a peak multiplier (2 to 5). Servers are sized for the peak, not the average.</li>
+          <li><b>AI requests</b> = monthly active users × AI requests per user (about 15, 60 or 250 a month for light, medium or heavy use).</li>
+        </ul>
+      </section>
+
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">How is usage turned into cost?</h2>
+        <ul class="mt-4 space-y-2 list-disc pl-5 max-w-3xl">
+          <li><b>Usage charges:</b> cost = max(0, usage − free allowance) ÷ billing unit × unit price. Tiered and volume prices are applied band by band.</li>
+          <li><b>Servers:</b> cost = hourly price × 730 hours × instances. Instances = peak requests per second ÷ the assumed capacity of one instance, rounded up.</li>
+          <li><b>Storage:</b> cost = billable GB × price per GB per month.</li>
+          <li><b>AI models:</b> cost = input tokens ÷ 1,000,000 × input price + cached tokens ÷ 1,000,000 × cache-read price + output tokens ÷ 1,000,000 × output price.</li>
+          <li><b>Annual cost</b> = monthly cost × 12. One-time fees (such as the Google Play registration) are shown separately as setup cost.</li>
+        </ul>
+      </section>
+
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">How are the three architectures chosen?</h2>
+        <p class="mt-3 max-w-3xl">
+          For each part of the stack the calculator considers a family of plans from one provider and picks the cheapest plan whose limits fit your usage.
+          Free plans that do not allow commercial use, or that pause inactive projects, are only offered for testing.
+          <b>Budget</b> uses free tiers and serverless services. <b>Recommended</b> uses paid, production-ready plans that a small team can run.
+          <b>Scalable</b> adds autoscaling, caching and paid monitoring only when your traffic or reliability priority justifies them.
+          The option that fits your priority and budget is highlighted.
+        </p>
+      </section>
+
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">What is not included?</h2>
+        <ul class="mt-4 space-y-2 list-disc pl-5 max-w-3xl">
+          <li>Taxes such as GST or VAT.</li>
+          <li>Payment gateway fees, because they are a percentage of your revenue (for example Razorpay's 2% or Stripe's 2.9% + $0.30 in the US).</li>
+          <li>Developer time, support plans, reserved-capacity discounts and negotiated rates. You can enter your own prices in the calculator's advanced mode.</li>
+          <li>Regional price differences: cloud prices are for the region shown on each service (mostly US regions).</li>
+        </ul>
+      </section>
+
+      <section class="mt-12">
+        <h2 class="text-2xl font-bold tracking-[-0.256px]">Where do the prices come from?</h2>
+        <p class="mt-3 max-w-3xl">
+          Each row below is a plan the calculator uses, with the official page its price was read from. "Estimate" marks prices or allowances the official page did not confirm.
+          The calculator can also re-check the prices of a given estimate against these pages on request.
+        </p>
+        <div class="overflow-x-auto mt-5 bg-surface border border-line rounded-2xl shadow-card">
+          <!--PRICING_SOURCES-->
+        </div>
+      </section>
+
+      <section class="mt-14 border-t border-line pt-8">
+        <h2 class="text-lg font-bold">Read next</h2>
+        <ul class="mt-3 space-y-2">
+          <li><a class="text-primary underline" href="/">What the hosting cost calculator does, with a worked example</a></li>
+          <li><a class="text-primary underline" href="/calculator/">Open the calculator and estimate your own project</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="border-t border-line bg-surface">
+      <div class="max-w-5xl mx-auto px-4 py-6 text-sm text-muted flex flex-wrap gap-x-6 gap-y-2">
+        <span>Smart Project Cost Calculator</span>
+        <a href="/" class="hover:text-primary">Home</a>
+        <a href="/calculator/" class="hover:text-primary">Calculator</a>
+      </div>
+    </footer>
+  </body>
+</html>

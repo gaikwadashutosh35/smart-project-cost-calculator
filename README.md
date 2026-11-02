@@ -50,6 +50,23 @@ Any Node 20+ host works (Render, Fly.io, Railway, Cloud Run). Set `ANTHROPIC_API
 
 The Claude routes are rate-limited per IP and overall (limits at the top of `server.ts`): description suggestions 10 per IP / 200 total per 10 min, reviews 5 / 50 per 10 min, live price checks 2 / 10 per hour. Over the limit, they return `429` with `Retry-After`. Limits are kept in memory, so they apply per server process and reset on restart. Behind a proxy or load balancer (Render, Fly.io, Cloud Run…), set `TRUST_PROXY` to the number of proxy hops (usually `1`) so limits apply per visitor instead of to everyone at once. There's no login, so also set a monthly spend limit for your API key's workspace in the Claude Console as a hard backstop.
 
+## SEO
+
+Pages: `/` (static landing page, indexable), `/about/` (method and every pricing source, indexable), `/calculator/` (the app, `noindex, follow`: its content is rendered by JavaScript, so the landing page is the one that ranks), plus a real `404`.
+
+- Set `SITE_URL` (see `.env.example`) to the live origin. It feeds canonical URLs, Open Graph tags, JSON-LD, `sitemap.xml`, `robots.txt` and `llms.txt`. Until the request host matches it, production responses carry `X-Robots-Tag: noindex`, so preview hosts (`*.onrender.com`, `*.fly.dev`) stay out of search.
+- `robots.txt`, `sitemap.xml`, `llms.txt` and `llms-full.txt` are served by `server.ts` from `seo.ts`. When you change a page's content, update its `modified` date in `seo.ts` and its visible "Updated" date and JSON-LD `dateModified`.
+- The pricing-sources table on `/about/` is generated from the catalogue at build time.
+- Keyword research: `seo/keywords-2026-11-02.csv`.
+
+After the first deploy on the real domain:
+
+1. Search Console: add a Domain property (DNS TXT), submit `/sitemap.xml`, request indexing for `/` and `/about/`.
+2. Bing Webmaster Tools: import from Search Console.
+3. IndexNow: add a 32-hex key file to `public/` and ping it after each deploy.
+4. Analytics: a cookie-free counter (e.g. Cloudflare Web Analytics) plus GA4 behind consent if you need traffic sources. Add their domains to the CSP in `server.ts`.
+5. Validate JSON-LD with the Rich Results Test; check the social card with a link preview.
+
 ## Code layout
 
 ```
@@ -62,6 +79,8 @@ src/calc/            framework-free logic (unit tested)
   engine.ts          plan selection, free tiers, tiers, overrides, AI tokens, totals
   export.ts          CSV, text summary, share links, money formatting
 src/ui/              React components (wizard, results, simulator, advanced mode, print report)
-server.ts            Express: Claude routes (/api/extract, /api/review, /api/check-prices) + Vite / static hosting
+index.html, about/, calculator/, 404.html   static pages (landing, method, app entry, not found)
+seo.ts               site URL, page list, robots / sitemap / llms.txt generators, sources table
+server.ts            Express: Claude routes, SEO files, security headers, 404 + Vite / static hosting
 claude.ts            Claude API calls (structured outputs, refusal fallback, web fetch for price checks)
 ```

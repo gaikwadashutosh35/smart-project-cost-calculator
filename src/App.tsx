@@ -97,7 +97,7 @@ export default function App() {
       <header className="relative bg-surface/90 backdrop-blur border-b border-line print:hidden sticky top-0 z-30">
         <span aria-hidden className="brand-gradient absolute inset-x-0 bottom-0 h-0.5" />
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          <span className="flex items-center gap-2.5 font-bold tracking-[-0.2px] shrink-0"><span className="brand-gradient grid place-items-center size-8 rounded-lg text-white shadow-card"><Calculator size={18} /></span><span className="hidden sm:inline">Smart Project Cost Calculator</span></span>
+          <a href="/" aria-label="Smart Project Cost Calculator home" className="flex items-center gap-2.5 font-bold tracking-[-0.2px] shrink-0"><span className="brand-gradient grid place-items-center size-8 rounded-lg text-white shadow-card"><Calculator size={18} /></span><span className="hidden sm:inline">Smart Project Cost Calculator</span></a>
           <input
             aria-label="Project name"
             value={sc.name}
@@ -107,6 +107,7 @@ export default function App() {
           />
           <span className="ml-auto flex items-center gap-2">
             {step === 4 && <span className="hidden md:block text-sm text-muted tabular-nums">{money(estimates[view].monthlyUsd, a.currency)}/mo</span>}
+            <a href="/about/" className={cx(btn.ghost, "hidden sm:inline-flex")}>How it works</a>
             <button type="button" className={btn.ghost} onClick={() => setPanel(true)}><FolderOpen size={16} /> <span className="hidden sm:inline">Scenarios</span></button>
           </span>
         </div>

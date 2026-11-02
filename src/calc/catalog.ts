@@ -53,6 +53,8 @@ export interface CatalogEntry {
   limits?: Partial<Record<UsageKey, number>>;
   /** Only valid when the database slot uses this provider. */
   requiresDb?: string;
+  /** Only valid with these database plans (e.g. Neon Free auth only with the Neon Free database). */
+  requiresDbEntry?: string[];
   /** Instance-based compute: sizing assumption used to compute instance count. */
   instance?: { capacityRps: number; vcpu?: number; memGb?: number };
   /** If any of these entries is also selected, the base fee is already paid there. */
@@ -437,9 +439,9 @@ export const CATALOG: CatalogEntry[] = [
     }],
     sourceUrl: 'https://cloud.google.com/identity-platform/pricing', checked: V, status: 'verified', lockIn: 'medium', alternatives: ['Supabase Auth', 'Clerk'],
   },
-  ...([['neon-auth-free', 'Included in Free', 60_000], ['neon-auth-launch', 'Included in Launch', 1_000_000]] as const).map(([id, plan, mau]): CatalogEntry => ({
+  ...([['neon-auth-free', 'Included in Free', 60_000, 'neon-free'], ['neon-auth-launch', 'Included in Launch', 1_000_000, 'neon-launch']] as const).map(([id, plan, mau, db]): CatalogEntry => ({
     id, slot: 'auth', provider: 'Neon', service: 'Managed Better Auth', plan, region: 'Same as database',
-    base: 0, meters: [], limits: { mau }, requiresDb: 'Neon', sourceUrl: 'https://neon.com/pricing', checked: '2026-11-02', status: 'verified',
+    base: 0, meters: [], limits: { mau }, requiresDb: 'Neon', requiresDbEntry: [db], sourceUrl: 'https://neon.com/pricing', checked: '2026-11-02', status: 'verified',
     lockIn: 'low', alternatives: ['Clerk', 'Supabase Auth', 'Auth.js'], notes: [`No separate charge up to ${mau.toLocaleString('en-US')} MAU per project; higher limits on request.`],
   })),
   {

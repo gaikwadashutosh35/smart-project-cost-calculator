@@ -36,8 +36,17 @@ test('free plans are only used when they fit and are allowed for production', ()
   const testing: Answers = { ...aiSaas, users: 'testing' };
   assert.ok(slots(testing, 'budget').includes('supabase-free'));
   assert.ok(!slots({ ...aiSaas, users: '5k-25k' }, 'budget').includes('supabase-free'), 'Supabase Free pauses — not for production');
-  const big: Answers = { ...aiSaas, users: '100k-500k', frequency: 'heavy' };
+  const big: Answers = { ...aiSaas, users: '100k-500k', frequency: 'heavy', provider: 'azure' };
   assert.ok(slots(big, 'budget').includes('clerk-pro'), 'Clerk Hobby caps at 50k MAU');
+});
+
+test('a Neon database uses Neon’s built-in auth, on the matching plan', () => {
+  const big: Answers = { ...aiSaas, users: '100k-500k', frequency: 'heavy' }; // budget tier picks Neon
+  const e = run(big, 'budget');
+  assert.equal(e.services.find((s) => s.slot === 'database')!.entryId, 'neon-launch');
+  const auth = e.services.find((s) => s.slot === 'auth')!;
+  assert.equal(auth.entryId, 'neon-auth-launch');
+  assert.equal(auth.monthlyUsd, 0);
 });
 
 test('growth is not a straight multiplication', () => {

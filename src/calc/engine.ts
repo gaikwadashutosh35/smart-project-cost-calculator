@@ -118,6 +118,7 @@ function priceEntry(entry: CatalogEntry, sel: Selection, ctx: Ctx, adv: Advanced
 function eligible(entry: CatalogEntry, ctx: Ctx, dbEntry?: CatalogEntry): boolean {
   if (entry.production === false && ctx.a.users !== 'testing') return false;
   if (entry.requiresDb && (dbEntry?.provider !== entry.requiresDb || (dbEntry.production === false) !== (entry.production === false))) return false;
+  if (entry.requiresDbEntry && !entry.requiresDbEntry.includes(dbEntry?.id ?? '')) return false;
   return Object.entries(entry.limits ?? {}).every(([k, limit]) => usage(k as UsageKey, { ...ctx, instances: 1 }, entry) <= limit!);
 }
 

@@ -103,6 +103,8 @@ export function recommend(a: Answers, d: Derived, tier: Tier, adv: Advanced): Se
 
   if (has('auth') || has('user_dashboard') || has('subscriptions')) {
     if (dbIsSupabase) add('auth', ['supabase-auth-free', 'supabase-auth-pro'], 'Included with Supabase (100k MAU on Pro) and tied directly to your database rows.');
+    else if (out.some((s) => s.slot === 'database' && s.family[0].startsWith('neon')))
+      add('auth', ['neon-auth-free', 'neon-auth-launch'], 'Included with Neon (Managed Better Auth): no separate charge up to 60k MAU on Free and 1M on paid plans.');
     else if (p === 'aws') add('auth', ['aws-cognito'], 'Managed user pools on AWS; 10k MAU free.');
     else if (p === 'gcp') add('auth', ['firebase-auth'], 'Firebase Auth; 50k MAU free.');
     else add('auth', ['clerk-hobby', 'clerk-pro'], 'Drop-in sign-in UI and user management; free up to 50k monthly users.');

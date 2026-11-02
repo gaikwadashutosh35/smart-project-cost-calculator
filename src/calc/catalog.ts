@@ -437,6 +437,11 @@ export const CATALOG: CatalogEntry[] = [
     }],
     sourceUrl: 'https://cloud.google.com/identity-platform/pricing', checked: V, status: 'verified', lockIn: 'medium', alternatives: ['Supabase Auth', 'Clerk'],
   },
+  ...([['neon-auth-free', 'Included in Free', 60_000], ['neon-auth-launch', 'Included in Launch', 1_000_000]] as const).map(([id, plan, mau]): CatalogEntry => ({
+    id, slot: 'auth', provider: 'Neon', service: 'Managed Better Auth', plan, region: 'Same as database',
+    base: 0, meters: [], limits: { mau }, requiresDb: 'Neon', sourceUrl: 'https://neon.com/pricing', checked: '2026-11-02', status: 'verified',
+    lockIn: 'low', alternatives: ['Clerk', 'Supabase Auth', 'Auth.js'], notes: [`No separate charge up to ${mau.toLocaleString('en-US')} MAU per project; higher limits on request.`],
+  })),
   {
     id: 'aws-cognito', slot: 'auth', provider: 'AWS', service: 'Cognito user pools', plan: 'Lite', region: 'us-east-1',
     base: 0, meters: [{

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { AI_MODELS, CATALOG, FX_DATE, FX_SOURCE, USD_TO, byId } from './src/calc/catalog';
 import { COMPUTE, supabaseBill, type SupabaseUsage } from './src/calc/supabase';
+import { SB_NEON_SCENARIOS, compareRow } from './src/calc/compare';
 
 const PLAN_COUNT = CATALOG.length;
 const VERIFIED_COUNT = CATALOG.filter((c) => c.status === 'verified').length;
@@ -15,6 +16,7 @@ export const BRAND = 'Smart Project Cost Calculator';
 export const PAGES = [
   { path: '/', file: 'index.html', title: 'SaaS and app hosting cost calculator', summary: 'What the calculator does, how it works, what it covers, FAQ.', modified: '2026-11-02' },
   { path: '/supabase-pricing-calculator/', file: 'supabase-pricing-calculator/index.html', title: 'Supabase pricing calculator', summary: 'Supabase Free and Pro quotas, overage rates and compute add-ons, with a calculator for your monthly bill.', modified: '2026-11-02' },
+  { path: '/guides/supabase-vs-neon-pricing/', file: 'guides/supabase-vs-neon-pricing/index.html', title: 'Supabase vs Neon pricing', summary: 'Plan-by-plan comparison and monthly totals at four usage levels, with authentication included on both.', modified: '2026-11-02' },
   { path: '/about/', file: 'about/index.html', title: 'How estimates are calculated', summary: 'Method, formulas, pricing sources and their check dates, limits.', modified: '2026-11-02' },
 ];
 
@@ -64,6 +66,7 @@ Full text of every page: ${SITE}/llms-full.txt
 - Are the prices live? They are a dated snapshot from official pricing pages (checked 2026-11-01), with a link per price. See ${SITE}/about/
 - Does it include payment gateway fees? No. Gateway fees are a percentage of revenue and are listed separately. See ${SITE}/about/
 - How much does Supabase cost per month? Pro is $25 a month including Micro compute, 8 GB database, 250 GB egress, 100,000 MAU and 100 GB file storage; usage above that is billed per unit. See ${SITE}/supabase-pricing-calculator/
+- Is Neon cheaper than Supabase? For small or idle databases and at high user counts, usually yes; for an always-on mid-size app they are close. See ${SITE}/guides/supabase-vs-neon-pricing/
 
 ## Pages
 ${PAGES.map((p) => `- [${p.title}](${SITE}${p.path}): ${p.summary}`).join('\n')}
@@ -105,7 +108,8 @@ ${rows.map(([p, s, st, url, d]) => `<tr class="border-b border-line/60"><td clas
 
 // ---------- Supabase pricing page (generated from the catalogue) ----------
 
-const usd = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: n < 0.1 ? 5 : 2 })}`;
+// Unit prices below $1 keep every published digit ($0.125, $0.00325); larger amounts show cents.
+const usd = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: n < 1 ? 5 : 2 })}`;
 const num = (n: number) => (n >= 1e6 && n % 1e6 === 0 ? `${n / 1e6}M` : n.toLocaleString('en-US'));
 const sbMeter = (id: string, i = 0) => byId(id).meters[i];
 const perText = (price: number, per: number, unit: string) => `${usd(price)} per ${per > 1 ? `${num(per)} ` : ''}${unit}`;
@@ -163,6 +167,52 @@ function supabaseExamplesHtml(): string {
   }).join('\n');
 }
 
+// ---------- Supabase vs Neon guide (generated from the catalogue) ----------
+
+function sbNeonGlanceHtml(): string {
+  const sp = byId('supabase-pro');
+  const nl = byId('neon-launch');
+  const nf = byId('neon-free').limits!;
+  const sf = byId('supabase-free').limits!;
+  const rows: [string, string, string][] = [
+    ['Monthly minimum', `${usd(sp.base)} per organisation, Micro compute included`, '$0 — pay only for what you use'],
+    ['Compute', `Fixed instance, always on. Small adds $5, Medium $50, Large $100 a month`, `${usd(nl.meters[0].price)} per CU-hour; scales to zero when idle`],
+    ['Database storage', `${sp.meters[0].included} GB included, then ${usd(sp.meters[0].price)} per GB`, `${usd(nl.meters[1].price)} per GB-month from the first GB`],
+    ['Egress', `${sp.meters[1].included} GB included, then ${usd(sp.meters[1].price)} per GB`, `${nl.meters[2].included} GB per project included, then ${usd(nl.meters[2].price)} per GB`],
+    ['Authentication', `${num(sbMeter('supabase-auth-pro').included!)} MAU included, then ${usd(sbMeter('supabase-auth-pro').price)} per MAU`, `Up to ${num(byId('neon-auth-launch').limits!.mau!)} MAU per project, no separate charge`],
+    ['Branches', '$0.01344 per branch-hour', '10 per project included, then $1.50 per branch-month'],
+    ['Free plan', `${sf.dbStorageGb! * 1000} MB database, ${sf.dbEgressGb} GB egress, ${num(byId('supabase-auth-free').limits!.mau!)} MAU; paused after 1 week of inactivity`, `${nf.dbStorageGb} GB and ${nf.cuHours} CU-hours per project, ${nf.dbEgressGb} GB egress, ${num(byId('neon-auth-free').limits!.mau!)} MAU; compute suspends when a limit runs out`],
+  ];
+  const td = 'px-4 py-2.5 align-top';
+  return `<table class="w-full text-sm">
+<thead><tr class="text-left text-muted border-b border-line"><th class="${td} font-medium"></th><th class="${td} font-medium">Supabase Pro</th><th class="${td} font-medium">Neon Launch</th></tr></thead>
+<tbody>
+${rows.map((r) => `<tr class="border-b border-line/60">${r.map((c, i) => `<td class="${td}${i === 0 ? ' font-medium' : ''}">${esc(c)}</td>`).join('')}</tr>`).join('\n')}
+</tbody>
+</table>`;
+}
+
+function sbNeonScenariosHtml(): string {
+  const money2 = (n: number) => usd(Math.round(n * 100) / 100);
+  const parts = (lines: { label: string; costUsd: number }[]) =>
+    lines.filter((l) => l.costUsd > 0).map((l) => `${esc(l.label.replace(/ \(net of \$10 compute credit\)/, ''))} ${money2(l.costUsd)}`).join(' · ');
+  const td = 'px-4 py-3 align-top';
+  return `<table class="w-full text-sm">
+<thead><tr class="text-left text-muted border-b border-line"><th class="${td} font-medium">Scenario</th><th class="${td} font-medium">Supabase Pro</th><th class="${td} font-medium">Neon Launch</th></tr></thead>
+<tbody>
+${SB_NEON_SCENARIOS.map((s) => {
+  const r = compareRow(s);
+  const cheaper = r.neon.totalUsd < r.supabase.totalUsd ? 'neon' : 'supabase';
+  const cell = (who: 'supabase' | 'neon', total: number, detail: string, free: boolean) =>
+    `<td class="${td}"><b class="text-base${cheaper === who ? ' text-primary' : ''}">${money2(total)}</b>${cheaper === who ? ' <span class="text-xs font-semibold text-primary">cheaper</span>' : ''}<span class="block text-xs text-muted mt-1">${detail}</span>${free ? '<span class="block text-xs mt-1">The Free plan also fits.</span>' : ''}</td>`;
+  return `<tr class="border-b border-line/60"><td class="${td}"><b>${esc(s.name)}</b><span class="block text-xs text-muted mt-1">${num(s.mau)} monthly active users · ${s.dbGb} GB database · ${s.egressGb} GB egress</span></td>${
+    cell('supabase', r.supabase.totalUsd, parts(r.supabase.lines), r.supabaseFreeFits)}${
+    cell('neon', r.neon.totalUsd, `${s.neonCu} CU × ${s.neonHours} h = ${num(r.cuHours)} CU-hours · ${parts(r.neon.lines)} · auth included`, r.neonFreeFits)}</tr>`;
+}).join('\n')}
+</tbody>
+</table>`;
+}
+
 /** Fill every build-time placeholder in a page. Used by the Vite HTML transform and by /llms-full.txt. */
 export function fillPlaceholders(html: string): string {
   return html
@@ -173,5 +223,7 @@ export function fillPlaceholders(html: string): string {
     .replace('<!--PRICING_SOURCES-->', () => sourcesTableHtml())
     .replace('<!--SUPABASE_PRICING_TABLE-->', () => supabasePricingTableHtml())
     .replace('<!--SUPABASE_COMPUTE_TABLE-->', () => supabaseComputeTableHtml())
-    .replace('<!--SUPABASE_EXAMPLES-->', () => supabaseExamplesHtml());
+    .replace('<!--SUPABASE_EXAMPLES-->', () => supabaseExamplesHtml())
+    .replace('<!--SB_NEON_GLANCE-->', () => sbNeonGlanceHtml())
+    .replace('<!--SB_NEON_SCENARIOS-->', () => sbNeonScenariosHtml());
 }

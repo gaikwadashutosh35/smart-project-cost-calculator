@@ -24,6 +24,7 @@ export default defineConfig(() => {
           calculator: path.resolve(__dirname, 'calculator/index.html'),
           about: path.resolve(__dirname, 'about/index.html'),
           supabase: path.resolve(__dirname, 'supabase-pricing-calculator/index.html'),
+          sbVsNeon: path.resolve(__dirname, 'guides/supabase-vs-neon-pricing/index.html'),
           notFound: path.resolve(__dirname, '404.html'),
         },
       },
